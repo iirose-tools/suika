@@ -87,7 +87,7 @@ export const GetMatrix = async (item: string) => {
 }
 
 export default () => {
-  bot.cmd(/查物品(.*)/, async (m, e, reply) => {
+  bot.cmd(/^查物品(.*)$/, async (m, e, reply) => {
     const result = await getItem(m[1]);
     if(result) {
       const msg: string[] = [];
@@ -100,7 +100,7 @@ export default () => {
     }
   })
   
-  bot.cmd(/查掉落(.*)/, async (m, e, reply) => {
+  bot.cmd(/^查掉落(.*)$/, async (m, e, reply) => {
     reply('[Arknights] 正在查询...')
     const stats = {
       query: 0,

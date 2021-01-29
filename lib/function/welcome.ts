@@ -1,7 +1,20 @@
 import logger from '../logger';
 import bot from '../bot';
+import fs from 'fs';
+import path from 'path';
 
 const random = (n: number, m: number): number => { return Math.floor(Math.random() * (m - n + 1) + n); };
+
+fs.mkdir(path.join(bot.app.data, 'welcome'), () => {});
+
+const wb = (uid: string): (string | null) => {
+  const file = path.join(bot.app.data, 'welcome', uid);
+  if(fs.existsSync(file)) {
+    return fs.readFileSync(file).toString()
+  } else {
+    return null;
+  }
+}
 
 const sentences = [
   [
@@ -69,6 +82,8 @@ export default () => {
 
     users[e.user.id] = true;
 
+    let isSp = false;
+
     setTimeout(() => {
       delete users[e.user.id]
     }, 1e4);
@@ -85,11 +100,11 @@ export default () => {
       // 11:00 ~ 13:00
       const len = sentences[1].length;
       welcome = sentences[1][random(0, len - 1)];
-    } else if (t >= 14 && t <= 19) {
+    } else if (t >= 14 && t <= 18) {
       // 14:00 ~ 19:00
       const len = sentences[2].length;
       welcome = sentences[2][random(0, len - 1)];
-    } else if (t >= 20 && t <= 23) {
+    } else if (t >= 19 && t <= 23) {
       // 20:00 ~ 23:00
       const len = sentences[3].length;
       welcome = sentences[3][random(0, len - 1)];
@@ -101,17 +116,48 @@ export default () => {
     
     // 特殊
     if(random(1, 10) <= 1) {
+      isSp = true;
       const len = sentences[5].length;
       welcome = sentences[5][random(0, len - 1)];
     }
 
     // 周三和周日，1%概率触发
-    if((week === 3 || week === 7) && ( t >= 14 && t <= 19 ) && random(1, 100) === 1) welcome = sp.bh3.week_3or7;
+    if((week === 3 || week === 7) && ( t >= 14 && t <= 18 ) && random(1, 100) === 1) {
+      welcome = sp.bh3.week_3or7;
+      isSp = true;
+    }
+
+    const tmp = wb(e.user.id);
+
+    if(!isSp && tmp) {
+      welcome = `{at} ${tmp}`;
+    }
 
     bot.bot.createMessage({
       content: `${welcome.replace(`{at}`, username)}`,
       color: '66ccff'
     });
+  })
+
+  bot.cmd(/^\.wb set (.*)$/, (m, e, reply) => {
+    const file = path.join(bot.app.data, 'welcome', e.message.user.id)
+    const wb = m[1];
+    try {
+      fs.writeFileSync(file, wb);
+      reply('[Welcome] 设置成功');
+    } catch (error) {
+      reply('[Welcome] 设置失败');
+    }
+  })
+
+  bot.cmd(/^\.wb rm$/, (m, e, reply) => {
+    const file = path.join(bot.app.data, 'welcome', e.message.user.id)
+    try {
+      fs.unlinkSync(file);
+      reply('[Welcome] 删除成功');
+    } catch (error) {
+      reply('[Welcome] 删除失败');
+    }
   })
 
   logger('Welcome').info('Welcome 启动完成');

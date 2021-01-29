@@ -7,6 +7,8 @@ import welcome from './welcome';
 import Arknights from './arknights';
 import Bangumi from './bangumi';
 import bili from './bili';
+import fun from './fun';
+import exec from './exec';
 
 export default () => {
   logger('Core').info('正在启动...');
@@ -17,5 +19,7 @@ export default () => {
   Arknights();
   Bangumi();
   bili();
+  fun();
+  exec();
   logger('Core').info('启动完成');
 }
