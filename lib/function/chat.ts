@@ -6,6 +6,9 @@ import util from 'util';
 
 export default () => {
   bot.bot.on(bot.event.PublicMessageEvent, async e => {
+    if(e.message.user.isBot()) return;    // 不响应BOT的消息
+    if(e.message.user.username === config.account.username) return;     // 不响应自己发送的消息
+
     const reply = (msg: string, color: string = '66ccff') => {
       const data = `${e.message.content} (_hr) ${e.message.user.username}_${Math.round(new Date().getTime()/1e3)} (hr_) ${msg}`;
       bot.bot.createMessage({
@@ -22,7 +25,7 @@ export default () => {
       } else {
         try {
           const result = JSON.parse((await got(encodeURI(`http://api.qingyunke.com/api.php?key=free&appid=0&msg=${msg}`))).body);
-          reply(result.content.split('{br}').join('\n').replace(/菲菲/gm, config.app.nickname));
+          reply(result.content.split('{br}').join('\n').replace(/菲菲/gm, config.app.nickname).replace(/妈咪/gm, '阁下'));
         } catch (error) {
           reply([
             '出现了意料之外的错误',
