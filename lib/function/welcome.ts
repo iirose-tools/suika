@@ -2,6 +2,7 @@ import logger from '../logger';
 import bot from '../bot';
 import fs from 'fs';
 import path from 'path';
+import config from '../../config';
 
 const random = (n: number, m: number): number => { return Math.floor(Math.random() * (m - n + 1) + n); };
 
@@ -46,8 +47,8 @@ const sentences = [
     '{at} 晚好，我正通过最亮的星为阁下许愿呢~',
     '{at} 晚上好~ 累了一天，记得要早点休息哟~',
     '{at} 无论天气如何，心里都要装着小星星哦~阁下晚上好！',
-    '{at} 晚上好呀~累了一天辛苦啦！栗子酱一直都在阁下身旁，加油！',
-    '{at} 阁下晚上好~今晚也要记得早点休息，栗子酱提前祝您晚安好梦~'
+    '{at} 晚上好呀~累了一天辛苦啦！{nickname}一直都在阁下身旁，加油！',
+    '{at} 阁下晚上好~今晚也要记得早点休息，{nickname}提前祝您晚安好梦~'
   ],
   [
     // 半夜
@@ -134,7 +135,7 @@ export default () => {
     }
 
     bot.bot.createMessage({
-      content: `${welcome.replace(`{at}`, username)}`,
+      content: `${welcome.replace(/{at}/gm, username).replace(/{nickname}/gm, config.app.nickname)}`,
       color: '66ccff'
     });
   })

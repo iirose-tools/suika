@@ -1,6 +1,7 @@
 export default {
   app: {
-    master: '机器人主人的完整名字'
+    master: '机器人主人的完整名字',
+    nickname: '机器人昵称'
   },
   account: {
     username: '用户名',

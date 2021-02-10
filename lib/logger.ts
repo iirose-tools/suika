@@ -22,3 +22,5 @@ log4js.configure({
 });
 
 export default log4js.getLogger;
+
+// 123

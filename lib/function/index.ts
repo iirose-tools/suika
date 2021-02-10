@@ -9,6 +9,7 @@ import Bangumi from './bangumi';
 import bili from './bili';
 import fun from './fun';
 import exec from './exec';
+import chat from './chat';
 
 export default () => {
   logger('Core').info('正在启动...');
@@ -21,5 +22,6 @@ export default () => {
   bili();
   fun();
   exec();
+  chat()
   logger('Core').info('启动完成');
 }
